@@ -8,3 +8,13 @@
 # Q&A
 
 # Audit scope
+
+
+[vvv-platform-smart-contracts @ 7008f399a58c05832ef361dc5c54bd091d723f84](https://github.com/vvvdevs/vvv-platform-smart-contracts/tree/7008f399a58c05832ef361dc5c54bd091d723f84)
+- [vvv-platform-smart-contracts/contracts/auth/VVVAuthorizationRegistry.sol](vvv-platform-smart-contracts/contracts/auth/VVVAuthorizationRegistry.sol)
+- [vvv-platform-smart-contracts/contracts/auth/VVVAuthorizationRegistryChecker.sol](vvv-platform-smart-contracts/contracts/auth/VVVAuthorizationRegistryChecker.sol)
+- [vvv-platform-smart-contracts/contracts/staking/VVVETHStaking.sol](vvv-platform-smart-contracts/contracts/staking/VVVETHStaking.sol)
+- [vvv-platform-smart-contracts/contracts/tokens/VvvToken.sol](vvv-platform-smart-contracts/contracts/tokens/VvvToken.sol)
+- [vvv-platform-smart-contracts/contracts/vesting/VVVVesting.sol](vvv-platform-smart-contracts/contracts/vesting/VVVVesting.sol)
+
+
