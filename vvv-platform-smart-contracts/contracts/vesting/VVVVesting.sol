@@ -24,7 +24,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         @param cliffEndTime the end time of the cliff
         @param growthRateProportion the % increase in tokens to be vested per interval
      */
-    struct VestingSchedule {
+    struct VestingSchedule { // @audit from ayush
         uint88 tokensToVestAtStart;
         uint120 tokensToVestAfterFirstInterval;
         uint32 intervalLength;
