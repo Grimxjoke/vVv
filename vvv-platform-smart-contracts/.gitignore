@@ -1,0 +1,14 @@
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+node_modules/
+lib/
+out/
+
+package-lock.json
+package.json
+yarn.lock
+remappings.txt
+hardhat.config.js
+foundry.toml
