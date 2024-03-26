@@ -3,7 +3,7 @@ pragma solidity 0.8.23;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { VVVAuthorizationRegistryChecker } from "contracts/auth/VVVAuthorizationRegistryChecker.sol";
+import { VVVAuthorizationRegistryChecker } from "../../contracts/auth/VVVAuthorizationRegistryChecker.sol";
 
 contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     using SafeERC20 for IERC20;
@@ -47,7 +47,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     mapping(StakingDuration => uint256) public durationToMultiplier;
 
     ///@notice maps user to their stakes by stakeId
-    mapping(address => mapping(uint256 => StakeData)) public userStakes;
+    mapping(address => mapping(uint256 _userStakedIds => StakeData)) public userStakes;
 
     ///@notice maps user to their stakeIds
     mapping(address => uint256[]) private _userStakeIds;

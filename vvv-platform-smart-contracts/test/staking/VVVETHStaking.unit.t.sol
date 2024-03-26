@@ -1,11 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import { VVVToken } from "contracts/tokens/VvvToken.sol";
-import { VVVAuthorizationRegistry } from "contracts/auth/VVVAuthorizationRegistry.sol";
-import { VVVAuthorizationRegistryChecker } from "contracts/auth/VVVAuthorizationRegistryChecker.sol";
-import { VVVETHStakingTestBase } from "test/staking/VVVETHStakingTestBase.sol";
-import { VVVETHStaking } from "contracts/staking/VVVETHStaking.sol";
+import { VVVToken } from "../../contracts/tokens/VvvToken.sol";
+import { VVVAuthorizationRegistry } from "../../contracts/auth/VVVAuthorizationRegistry.sol";
+import { VVVAuthorizationRegistryChecker } from "../../contracts/auth/VVVAuthorizationRegistryChecker.sol";
+// vvv-platform-smart-contracts/test/staking/VVVETHStakingTestBase.sol
+import { VVVETHStakingTestBase } from "../staking/VVVETHStakingTestBase.sol";
+import { VVVETHStaking } from "../../contracts/staking/VVVETHStaking.sol";
 
 /**
  * @title VVVETHStaking Unit Tests
@@ -49,6 +50,7 @@ contract VVVETHStakingUnitTests is VVVETHStakingTestBase {
         );
 
         //mint 1,000,000 $VVV tokens to the staking contract
+        //audit-info I don't know why the deployer can mint some token , they didn't grant + setPermission to themselves first
         VvvTokenInstance.mint(address(EthStakingInstance), 1_000_000 * 1e18);
 
         vm.deal(sampleUser, 10 ether);
@@ -113,6 +115,7 @@ contract VVVETHStakingUnitTests is VVVETHStakingTestBase {
     }
 
     // Tests that a user can stake multiple times, that StakeData is stored correctly, and that their stake Ids are stored correctly
+    //note Test File very Big, I'll finish it tomorrow.
     function testStakeEthMultiple() public {
         vm.startPrank(sampleUser, sampleUser);
 

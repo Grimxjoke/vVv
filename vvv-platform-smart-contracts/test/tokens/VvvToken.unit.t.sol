@@ -2,9 +2,9 @@
 pragma solidity ^0.8.23;
 
 import { VVVTokenTestBase } from "./VvvTokenTestBase.sol";
-import { VVVToken } from "contracts/tokens/VvvToken.sol";
-import { VVVAuthorizationRegistry } from "contracts/auth/VVVAuthorizationRegistry.sol";
-import { VVVAuthorizationRegistryChecker } from "contracts/auth/VVVAuthorizationRegistryChecker.sol";
+import { VVVToken } from "../../contracts/tokens/VvvToken.sol";
+import { VVVAuthorizationRegistry } from "../../contracts/auth/VVVAuthorizationRegistry.sol";
+import { VVVAuthorizationRegistryChecker } from "../../contracts/auth/VVVAuthorizationRegistryChecker.sol";
 
 contract VVVTokenUInitTests is VVVTokenTestBase {
     function setUp() public {

@@ -12,7 +12,7 @@ contract VVVTokenTestBase is Test {
     VVVAuthorizationRegistry AuthRegistry;
     VVVToken vvvToken;
 
-    uint256 public initialSupply = 1000000;
+    uint256 public initialSupply = 1_000_000;
     uint256 public cap = initialSupply * 10;
 
     uint256 public deployerKey = 1234;

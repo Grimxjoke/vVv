@@ -2,10 +2,12 @@
 pragma solidity 0.8.23;
 
 import "lib/forge-std/src/Test.sol";
-import { VVVAuthorizationRegistry } from "contracts/auth/VVVAuthorizationRegistry.sol";
-import { VVVAuthorizationRegistryChecker } from "contracts/auth/VVVAuthorizationRegistryChecker.sol";
-import { MockERC20 } from "contracts/mock/MockERC20_AuthRegistry.sol";
+import { VVVAuthorizationRegistry } from "../../contracts/auth/VVVAuthorizationRegistry.sol";
+import { VVVAuthorizationRegistryChecker } from "../../contracts/auth/VVVAuthorizationRegistryChecker.sol";
+import { MockERC20 } from "../../contracts/mock/MockERC20_AuthRegistry.sol";
 
+
+//audit-ok Finish Review
 contract VVVAuthorizationRegistryTests is Test {
     VVVAuthorizationRegistry registry;
     MockERC20 mockToken;

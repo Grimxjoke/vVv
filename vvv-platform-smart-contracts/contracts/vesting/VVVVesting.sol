@@ -4,7 +4,7 @@ pragma solidity ^0.8.23;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { FixedPointMathLib } from "@solmate/src/utils/FixedPointMathLib.sol";
-import { VVVAuthorizationRegistryChecker } from "contracts/auth/VVVAuthorizationRegistryChecker.sol";
+import { VVVAuthorizationRegistryChecker } from "../../contracts/auth/VVVAuthorizationRegistryChecker.sol";
 
 contract VVVVesting is VVVAuthorizationRegistryChecker {
     using SafeERC20 for IERC20;
@@ -24,7 +24,11 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         @param cliffEndTime the end time of the cliff
         @param growthRateProportion the % increase in tokens to be vested per interval
      */
-    struct VestingSchedule { // @audit from ayush
+    struct VestingSchedule { 
+        //audit from ayush
+        //audit-info
+        //audit-issue
+        //audit-ok
         uint88 tokensToVestAtStart;
         uint120 tokensToVestAfterFirstInterval;
         uint32 intervalLength;
