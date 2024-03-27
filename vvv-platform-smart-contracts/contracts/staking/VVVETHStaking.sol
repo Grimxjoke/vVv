@@ -8,7 +8,7 @@ import { VVVAuthorizationRegistryChecker } from "../../contracts/auth/VVVAuthori
 contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     using SafeERC20 for IERC20;
 
-    uint256 public constant DENOMINATOR = 10_000;
+    uint256 public constant DENOMINATOR = 10_000;//e i guess this represent 100%
 
     ///@notice the interface to the $VVV token
     IERC20 public vvvToken;
@@ -50,7 +50,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     mapping(address => mapping(uint256 _userStakedId => StakeData)) public userStakes;
 
     ///@notice maps user to their stakeIds
-    mapping(address => uint256[]) private _userStakeIds;
+    mapping(address => uint256[]) private _userStakeIds;//check
 
     ///@notice maps user to the amount of $VVV claimed
     mapping(address => uint256) public userVvvClaimed;
@@ -111,9 +111,9 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         durationToSeconds[StakingDuration.SixMonths] = 180 days;
         durationToSeconds[StakingDuration.OneYear] = 360 days;
 
-        durationToMultiplier[StakingDuration.ThreeMonths] = 10_000;
-        durationToMultiplier[StakingDuration.SixMonths] = 15_000;
-        durationToMultiplier[StakingDuration.OneYear] = 30_000;
+        durationToMultiplier[StakingDuration.ThreeMonths] = 10_000;//e 100%
+        durationToMultiplier[StakingDuration.SixMonths] = 15_000;//e 150%
+        durationToMultiplier[StakingDuration.OneYear] = 30_000;//e 300%
     }
 
     ///@notice Fallback function to receive ETH
@@ -144,7 +144,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param _stakeId The id of the stake to restake
         @param _stakeDuration The duration of the new stake
      */
-    function restakeEth(
+    function restakeEth(//audit can find something here
         uint256 _stakeId,
         StakingDuration _stakeDuration
     ) external whenStakingIsPermitted returns (uint256) {
@@ -188,7 +188,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
 
         userVvvClaimed[msg.sender] += _vvvAmount;
 
-        vvvToken.safeTransfer(msg.sender, _vvvAmount);
+        vvvToken.safeTransfer(msg.sender, _vvvAmount);//audit-info does this contract have approval to send the vvvToken
 
         emit VvvClaim(msg.sender, _vvvAmount);
     }
@@ -203,7 +203,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         if (stakeIds.length == 0) return 0;
 
         uint256 totalVvvAccrued;
-        for (uint256 i = 0; i < stakeIds.length; ++i) {
+        for (uint256 i = 0; i < stakeIds.length; ++i) {//check
             StakeData memory stake = userStakes[msg.sender][stakeIds[i]];
             unchecked {
                 totalVvvAccrued += calculateAccruedVvvAmount(stake);
@@ -219,7 +219,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param _stake A StakeData struct representing the stake for which the accrued $VVV is to be calculated
         @return $VVV accrued
      */
-    function calculateAccruedVvvAmount(StakeData memory _stake) public view returns (uint256) {
+    function calculateAccruedVvvAmount(StakeData memory _stake) public view returns (uint256) {//Remix
         uint256 stakeDuration = durationToSeconds[_stake.stakeDuration];
         uint256 secondsSinceStakingStarted = block.timestamp - _stake.stakeStartTimestamp;
         uint256 secondsStaked;
@@ -231,7 +231,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
                 ? stakeDuration
                 : secondsSinceStakingStarted;
 
-            nominalAccruedEth = (secondsStaked * _stake.stakedEthAmount) / stakeDuration;
+            nominalAccruedEth = (secondsStaked * _stake.stakedEthAmount) / stakeDuration;//check
 
             accruedVvv =
                 (nominalAccruedEth * ethToVvvExchangeRate() * durationToMultiplier[_stake.stakeDuration]) /
@@ -261,7 +261,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     }
 
     ///@notice sets the duration multipliers for a duration enum entry
-    function setDurationMultipliers(
+    function setDurationMultipliers(//q why use the array of enum stakingDuration
         StakingDuration[] memory _duration,
         uint256[] memory _multipliers
     ) external onlyAuthorized {
@@ -281,6 +281,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     }
 
     ///@notice allows admin to withdraw ETH
+    //q why not using checks, what if the _amount > existing balance?
     function withdrawEth(uint256 _amount) external onlyAuthorized {
         (bool success, ) = payable(msg.sender).call{ value: _amount }("");
         if (!success) revert WithdrawFailed();

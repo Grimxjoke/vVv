@@ -5,6 +5,7 @@
 node_modules/
 lib/
 out/
+cache_forge/
 
 package-lock.json
 package.json

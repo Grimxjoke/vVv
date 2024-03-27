@@ -17,18 +17,14 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         @notice struct representing a user's vesting schedule
         @param tokensToVestAtStart the total amount of tokens to be vested at schedule start
         @param tokensToVestAfterFirstInterval the total amount of tokens to be vested after the first interval
-        @param intervalLength the length of each interval in seconds
-        @param maxIntervals number of post-cliff intervals        
+        @param intervalLength the length of each interval in seconds //e this is interval length eg. 30 days
+        @param maxIntervals number of post-cliff intervals        //e this is number of interval to use eg. 5 intervals
         @param tokenAmountWithdrawn the amount of tokens that have been withdrawn
         @param scheduleStartTime the start time of the vesting schedule
         @param cliffEndTime the end time of the cliff
         @param growthRateProportion the % increase in tokens to be vested per interval
      */
-    struct VestingSchedule { 
-        //audit from ayush
-        //audit-info
-        //audit-issue
-        //audit-ok
+    struct VestingSchedule {
         uint88 tokensToVestAtStart;
         uint120 tokensToVestAfterFirstInterval;
         uint32 intervalLength;
@@ -42,7 +38,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
     /**
        @notice struct representing parameters for setting a vesting schedule
        @param vestedUser the address of the user whose vesting schedule is being set
-       @param vestingScheduleIndex the index of the vesting schedule being set
+       @param vestingScheduleIndex the index of the vesting schedule being set //e this index is user specific
        @param vestingSchedule the vesting schedule being set
      */
     struct SetVestingScheduleParams {
@@ -52,6 +48,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
     }
 
     ///@notice maps user address to array of vesting schedules
+    // audit-info  check this later. because struct and mapping, both are updating address to vestingSchedule
     mapping(address => VestingSchedule[]) public userVestingSchedules;
 
     /**
@@ -193,12 +190,12 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         @param _params SetVestingScheduleParams struct
      */
     function _setVestingSchedule(SetVestingScheduleParams memory _params) private {
-        VestingSchedule memory newSchedule = _params.vestingSchedule;
+        VestingSchedule memory newSchedule = _params.vestingSchedule;//check i have some doubts
 
         if (_params.vestingScheduleIndex == userVestingSchedules[_params.vestedUser].length) {
             userVestingSchedules[_params.vestedUser].push(newSchedule);
         } else if (_params.vestingScheduleIndex < userVestingSchedules[_params.vestedUser].length) {
-            userVestingSchedules[_params.vestedUser][_params.vestingScheduleIndex] = newSchedule;
+            userVestingSchedules[_params.vestedUser][_params.vestingScheduleIndex] = newSchedule;//audit-info directly overwriting in schedule doesn't it affect. have to check
         } else {
             revert InvalidScheduleIndex();
         }
@@ -219,6 +216,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
 
     /**
        @notice returns the amount of tokens that are currently vested (exlcudes amount withdrawn)
+       //audit-info wrong natspec comment this funcitons doesn't exclude withdrawn amount
            @param _vestedUser the user whose withdrawable amount is being queried
            @param _vestingScheduleIndex the index of the vesting schedule being queried
            @dev considers 4 cases for calculating withdrawable amount:
@@ -227,6 +225,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
                3. schedule has ended with tokens remaining to withdraw
                4. schedule is in progress with tokens remaining to withdraw
      */
+    //audit-info  check this function later might find something
     function getVestedAmount(
         address _vestedUser,
         uint256 _vestingScheduleIndex
@@ -239,7 +238,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
             userVestingSchedules[_vestedUser].length == 0
         ) {
             return 0;
-        } else if (block.timestamp < vestingSchedule.cliffEndTime) {
+        } else if (block.timestamp < vestingSchedule.cliffEndTime) {//check out how cliffEndTime is beging set
             return vestingSchedule.tokensToVestAtStart;
         } else {
             uint256 elapsedIntervals;
@@ -274,12 +273,13 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         @param _elapsedIntervals the number of intervals over which to calculate the vested amount (equivalent to "n")
         @param _growthRateProportion the proportion of FixedPointMathLib.WAD to increase token vesting per interval (500 = 5%, equivalent to "r-1" in the above formula, but scaled for fixed-point math where WAD is 10e18)
      */
+    //audit-info math part here can check with fuzzing
     function calculateVestedAmountAtInterval(
         uint256 _firstIntervalAccrual,
         uint256 _elapsedIntervals,
         uint256 _growthRateProportion
     ) public pure returns (uint256) {
-        if (_growthRateProportion == 0 || _elapsedIntervals == 0) {
+        if (_growthRateProportion == 0 || _elapsedIntervals == 0) {//check does that mean _growthRateProportion can't be 0
             return _firstIntervalAccrual * _elapsedIntervals;
         } else {
             uint256 r;
@@ -353,7 +353,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         @notice used to batch-call _setVestingSchedule
         @notice only callable by admin
         @param _params array of SetVestingScheduleParams structs
-     */
+     *///check if vesting schedule is for user then why admin can change it
     function batchSetVestingSchedule(SetVestingScheduleParams[] calldata _params) external onlyAuthorized {
         for (uint256 i = 0; i < _params.length; ++i) {
             _setVestingSchedule(_params[i]);
