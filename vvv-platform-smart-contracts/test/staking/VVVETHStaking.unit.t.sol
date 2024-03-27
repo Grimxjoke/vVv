@@ -115,7 +115,6 @@ contract VVVETHStakingUnitTests is VVVETHStakingTestBase {
     }
 
     // Tests that a user can stake multiple times, that StakeData is stored correctly, and that their stake Ids are stored correctly
-    //note Test File very Big, I'll finish it tomorrow.
     function testStakeEthMultiple() public {
         vm.startPrank(sampleUser, sampleUser);
 
@@ -167,6 +166,8 @@ contract VVVETHStakingUnitTests is VVVETHStakingTestBase {
     // Tests that a user cannot stake with a duration that is not ThreeMonths, SixMonths, or OneYear
     // This array has a max index of 2, so use 3 to test for invalid duration
     // Summons the "Conversion into non-existent enum type" error which afaik is a feature of >0.8.0
+
+    //audit Is it sure that we can't set another random duration ? Even with Low-Level Call ? 
     function testInvalidStakingDuration() public {
         vm.startPrank(sampleUser, sampleUser);
         vm.expectRevert();

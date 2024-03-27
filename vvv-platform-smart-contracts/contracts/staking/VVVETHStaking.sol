@@ -47,7 +47,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     mapping(StakingDuration => uint256) public durationToMultiplier;
 
     ///@notice maps user to their stakes by stakeId
-    mapping(address => mapping(uint256 _userStakedIds => StakeData)) public userStakes;
+    mapping(address => mapping(uint256 _userStakedId => StakeData)) public userStakes;
 
     ///@notice maps user to their stakeIds
     mapping(address => uint256[]) private _userStakeIds;
