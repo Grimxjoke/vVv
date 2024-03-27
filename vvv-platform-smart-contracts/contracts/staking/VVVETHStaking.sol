@@ -144,7 +144,10 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param _stakeId The id of the stake to restake
         @param _stakeDuration The duration of the new stake
      */
-    function restakeEth(//audit can find something here
+    //audit can find something here
+    //audit-info It's just a way to stake again without having to withdraw the ETH and then Stake again. 
+    //audit Will spend mire time on that tommorrow.
+    function restakeEth(
         uint256 _stakeId,
         StakingDuration _stakeDuration
     ) external whenStakingIsPermitted returns (uint256) {
@@ -188,7 +191,10 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
 
         userVvvClaimed[msg.sender] += _vvvAmount;
 
-        vvvToken.safeTransfer(msg.sender, _vvvAmount);//audit-info does this contract have approval to send the vvvToken
+        //audit-info does this contract have approval to send the vvvToken
+        //audit-ok You don't need approval for a transfer, just for transferFrom.
+        //audit-ok As the token are Alway's sends from address(this) to another address.
+        vvvToken.safeTransfer(msg.sender, _vvvAmount);
 
         emit VvvClaim(msg.sender, _vvvAmount);
     }

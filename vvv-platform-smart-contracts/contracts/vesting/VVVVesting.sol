@@ -195,7 +195,8 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         if (_params.vestingScheduleIndex == userVestingSchedules[_params.vestedUser].length) {
             userVestingSchedules[_params.vestedUser].push(newSchedule);
         } else if (_params.vestingScheduleIndex < userVestingSchedules[_params.vestedUser].length) {
-            userVestingSchedules[_params.vestedUser][_params.vestingScheduleIndex] = newSchedule;//audit-info directly overwriting in schedule doesn't it affect. have to check
+            //audit-info directly overwriting in schedule doesn't it affect. have to check
+            userVestingSchedules[_params.vestedUser][_params.vestingScheduleIndex] = newSchedule;
         } else {
             revert InvalidScheduleIndex();
         }
