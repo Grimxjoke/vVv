@@ -34,8 +34,8 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param stakeDuration The duration of the stake
      */
     struct StakeData {
-        uint224 stakedEthAmount;
-        uint32 stakeStartTimestamp;
+        uint224 stakedEthAmount; //e it will ran out after 18.5 ether
+        uint32 stakeStartTimestamp; //e it will ran out after  2160
         bool stakeIsWithdrawn;
         StakingDuration stakeDuration;
     }
@@ -50,7 +50,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     mapping(address => mapping(uint256 _userStakedId => StakeData)) public userStakes;
 
     ///@notice maps user to their stakeIds
-    mapping(address => uint256[]) private _userStakeIds;//check
+    mapping(address => uint256[]) private _userStakeIds;
 
     ///@notice maps user to the amount of $VVV claimed
     mapping(address => uint256) public userVvvClaimed;
@@ -132,11 +132,16 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param _stakeDuration The duration of the stake
         @return The id of the stake
      */
+<<<<<<< HEAD
      //audit What if the _stakeDuration is not part of the Enum
      //audit-info I assume it will return 0 later as the mapping for that value is never instanciate
+=======
+    //audit-issue no parameter check for _stakeDuration. if someone put wrong parameter then it will revert
+>>>>>>> refs/remotes/origin/main
     function stakeEth(
         StakingDuration _stakeDuration
     ) external payable whenStakingIsPermitted returns (uint256) {
+        //audit @paul can you check what happens if we transfer more than 19 ether while calling this funciton
         _stakeEth(_stakeDuration, msg.value);
         return stakeId;
     }
@@ -146,7 +151,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param _stakeId The id of the stake to restake
         @param _stakeDuration The duration of the new stake
      */
-    //audit can find something here
+    //audit-issue no parameter check for _stakeDuration. if someone put wrong parameter then it will revert
     //audit-info It's just a way to stake again without having to withdraw the ETH and then Stake again. 
     //audit Will spend mire time on that tommorrow.
     function restakeEth(
@@ -197,6 +202,8 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         //audit-info does this contract have approval to send the vvvToken
         //audit-ok You don't need approval for a transfer, just for transferFrom.
         //audit-ok As the token are Alway's sends from address(this) to another address.
+        //audit-info in test file it is said that 1,000,000 vvv token is minted to staking contract. but how?
+        //audit-ok  Well, it seems we won't find anything here. Let's check this as a last resort.
         vvvToken.safeTransfer(msg.sender, _vvvAmount);
 
         emit VvvClaim(msg.sender, _vvvAmount);
@@ -228,7 +235,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param _stake A StakeData struct representing the stake for which the accrued $VVV is to be calculated
         @return $VVV accrued
      */
-    function calculateAccruedVvvAmount(StakeData memory _stake) public view returns (uint256) {//Remix
+    function calculateAccruedVvvAmount(StakeData memory _stake) public view returns (uint256) {//check the math parts later
         uint256 stakeDuration = durationToSeconds[_stake.stakeDuration];
         uint256 secondsSinceStakingStarted = block.timestamp - _stake.stakeStartTimestamp;
         uint256 secondsStaked;
@@ -322,12 +329,16 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     }
 
     ///@notice checks permissions for withdrawing a stake based on eth amount, stake start time, and whether the stake has been withdrawn
+<<<<<<< HEAD
     //audit-info If the "durationToSeconds[_stake.stakeDuration]" is set by user, will probably has a 0 value
+=======
+    //audit-issue-LOW  wrong error is used in _stake.stakedEthAmount == 0. it's not InvalidStakeId(), its CantStakeZeroEth()
+>>>>>>> refs/remotes/origin/main
     function _withdrawChecks(StakeData memory _stake) private view {
         if (_stake.stakedEthAmount == 0) revert InvalidStakeId();
         if (_stake.stakeIsWithdrawn) revert StakeIsWithdrawn();
         if (block.timestamp < _stake.stakeStartTimestamp + durationToSeconds[_stake.stakeDuration]) {
-            revert CantWithdrawBeforeStakeDuration();
+            revert CantWithdrawBeforeStakeDuration(); //audit  check if there are any block timestamp manipulation happens or not
         }
     }
 }
