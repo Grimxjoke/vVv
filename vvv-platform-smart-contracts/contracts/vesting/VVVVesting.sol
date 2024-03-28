@@ -192,6 +192,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
     function _setVestingSchedule(SetVestingScheduleParams memory _params) private {
         VestingSchedule memory newSchedule = _params.vestingSchedule;//check i have some doubts
 
+        // audit-issue Improper Array Deletion look into removeVestingSchedule() function at L376
         if (_params.vestingScheduleIndex == userVestingSchedules[_params.vestedUser].length) {
             userVestingSchedules[_params.vestedUser].push(newSchedule);
         } else if (_params.vestingScheduleIndex < userVestingSchedules[_params.vestedUser].length) {
@@ -371,6 +372,7 @@ contract VVVVesting is VVVAuthorizationRegistryChecker {
         address _vestedUser,
         uint256 _vestingScheduleIndex
     ) external onlyAuthorized {
+        // audit-issue Improper Array Deletion look into _setVestingSchedule() function at L196
         delete userVestingSchedules[_vestedUser][_vestingScheduleIndex];
         emit RemoveVestingSchedule(_vestedUser, _vestingScheduleIndex);
     }
