@@ -60,6 +60,29 @@ contract VVVETHStakingUnitFuzzTests is VVVETHStakingTestBase {
         vm.stopPrank();
     }
 
+
+    function testFuzz_InvalidStakingDuration(uint8 number, uint256 amount) public {
+        
+        number = uint8(bound(number, 3, type(uint8).max));
+        amount = bound(amount, 1, type(uint224).max);
+
+        vm.startPrank(sampleUser, sampleUser);
+        vm.expectRevert();
+
+
+        //audit-ok Original call 
+        // EthStakingInstance.stakeEth{ value: 1 ether }(VVVETHStaking.StakingDuration(uint8(3)));
+        
+        //audit-ok
+        // Custom Low-Level Call
+        
+        bytes memory data = abi.encodeWithSignature("stakeEth(uint8)", number);
+        (bool ok, ) = address(EthStakingInstance).call{ value: amount}(data);
+        require(ok, "call failed");
+
+        vm.stopPrank();
+    }
+
     // Test that contract correctly stores the StakeData and stakeIds for any valid input combination
     function testFuzz_stakeEth(uint256 _callerKey, uint224 _stakeAmount, uint32 _duration) public {
         uint256 callerKey = bound(_callerKey, 1, 100000);

@@ -168,10 +168,21 @@ contract VVVETHStakingUnitTests is VVVETHStakingTestBase {
     // Summons the "Conversion into non-existent enum type" error which afaik is a feature of >0.8.0
 
     //audit Is it sure that we can't set another random duration ? Even with Low-Level Call ? 
+    //audit-ok I tried to call it with low-Level Call but the Solidity compiler throw an error
     function testInvalidStakingDuration() public {
         vm.startPrank(sampleUser, sampleUser);
         vm.expectRevert();
-        EthStakingInstance.stakeEth{ value: 1 ether }(VVVETHStaking.StakingDuration(uint8(3)));
+
+        //audit-ok Original call 
+        // EthStakingInstance.stakeEth{ value: 1 ether }(VVVETHStaking.StakingDuration(uint8(3)));
+        
+        //audit-ok
+        // Custom Low-Level Call
+        uint8 number = 10;
+        bytes memory data = abi.encodeWithSignature("stakeEth(uint8)", number);
+        (bool ok, ) = address(EthStakingInstance).call{ value: 1 ether }(data);
+        require(ok, "call failed");
+
         vm.stopPrank();
     }
 

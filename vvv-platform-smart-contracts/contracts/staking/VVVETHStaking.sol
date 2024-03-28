@@ -132,6 +132,8 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @param _stakeDuration The duration of the stake
         @return The id of the stake
      */
+     //audit What if the _stakeDuration is not part of the Enum
+     //audit-info I assume it will return 0 later as the mapping for that value is never instanciate
     function stakeEth(
         StakingDuration _stakeDuration
     ) external payable whenStakingIsPermitted returns (uint256) {
@@ -162,6 +164,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
         @notice Withdraws a stake
         @param _stakeId The id of the stake
      */
+     //audit There is no check here about the stake Duration.
     function withdrawStake(uint256 _stakeId) external {
         StakeData storage stake = userStakes[msg.sender][_stakeId];
         _withdrawChecks(stake);
@@ -294,6 +297,8 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     }
 
     ///@notice Private function to stake ETH, used by both stakeEth and restakeEth
+    //audit-info Just Create a new StakeData Object in the userStakes double-Mapping
+    //audit-info Also Add the unique stakeId to the "_userStakeIds" mapping
     function _stakeEth(StakingDuration _stakeDuration, uint256 _stakedEthAmount) private {
         if (_stakedEthAmount == 0) revert CantStakeZeroEth();
         ++stakeId;
@@ -317,6 +322,7 @@ contract VVVETHStaking is VVVAuthorizationRegistryChecker {
     }
 
     ///@notice checks permissions for withdrawing a stake based on eth amount, stake start time, and whether the stake has been withdrawn
+    //audit-info If the "durationToSeconds[_stake.stakeDuration]" is set by user, will probably has a 0 value
     function _withdrawChecks(StakeData memory _stake) private view {
         if (_stake.stakedEthAmount == 0) revert InvalidStakeId();
         if (_stake.stakeIsWithdrawn) revert StakeIsWithdrawn();
